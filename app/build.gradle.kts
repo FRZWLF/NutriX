@@ -6,16 +6,16 @@ plugins {
     id("com.google.devtools.ksp")
     id ("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
-    id("com.google.gms.google-services")
+ //   id("com.google.gms.google-services")
 
 }
 
 android {
-    namespace = "com.example.diaryapp"
+    namespace = "com.sem.nutrix"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.diaryapp"
+        applicationId = "com.sem.nutrix"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
