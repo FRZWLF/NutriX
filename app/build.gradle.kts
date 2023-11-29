@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sem.nutrix"
-        minSdk = 31
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation ("androidx.compose.ui:ui:$compose_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.compose.material3:material3:1.2.0-alpha08")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

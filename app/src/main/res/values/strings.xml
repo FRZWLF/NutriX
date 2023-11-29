@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">NutriX</string>
-    <string name="auth_title">Welcome back</string>
-    <string name="auth_subtitle">Please sign in to continue.</string>
+    <string name="auth_login_title">Welcome back</string>
+    <string name="auth_login_subtitle">Please sign in to continue.</string>
+    <string name="auth_registration_title">Hello there,</string>
+    <string name="auth_registration_subtitle">Create an Account</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="terms_and_conditions">By continuing you accept our Privacy and Term of Use</string>
+    <string name="terms_and_conditions_header">Term of Use</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="divider_text">Or</string>
+    <string name="go_to_login">Already have an account? Login</string>
+    <string name="google_sign_up">Sign up with Google</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="google_sec_text">Please wait...</string>
+
 </resources>

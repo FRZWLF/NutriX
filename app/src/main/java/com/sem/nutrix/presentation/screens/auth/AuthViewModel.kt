@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 class AuthViewModel : ViewModel() {
     var authenticated = mutableStateOf(false)
         private set
+    var registered = mutableStateOf(false)
+        private set
     var loadingState = mutableStateOf(false)
         private set
 
@@ -49,5 +51,35 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
+//    fun signUpWithMongoAtlas(
+////        tokenId: String,
+//        onSuccess: () -> Unit,
+//        onError: (Exception) -> Unit
+//    ) {
+//        viewModelScope.launch {
+//            try {
+//                val result = withContext(Dispatchers.IO) {
+//                    App.create(APP_ID).emailPasswordAuth.registerUser(
+//                        email = "ricorichter02@gmail.com",
+//                        password = "Frzwlf_112"
+//                    )
+//                }
+//                withContext(Dispatchers.Main) {
+//                    if (result) {
+//                        onSuccess()
+//                        delay(600)
+//                        registered.value = true
+//                    } else {
+//                        onError(Exception("User is not logged in."))
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                withContext(Dispatchers.Main) {
+//                    onError(e)
+//                }
+//            }
+//        }
+//    }
 
 }

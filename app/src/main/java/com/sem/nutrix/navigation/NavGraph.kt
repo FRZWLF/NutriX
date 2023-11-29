@@ -24,7 +24,7 @@ fun SetupNavGraph(
         startDestination = startDestination,
         navController = navController
     ){
-        authenticationRoute(
+        authenticationLoginRoute(
             navigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
@@ -39,7 +39,7 @@ fun SetupNavGraph(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.authenticationRoute(
+fun NavGraphBuilder.authenticationLoginRoute(
     navigateToHome: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
@@ -84,6 +84,7 @@ fun NavGraphBuilder.authenticationRoute(
         )
     }
 }
+
 
 fun NavGraphBuilder.homeRoute(){
     composable(route = Screen.Home.route) {

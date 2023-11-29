@@ -20,14 +20,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.ui.res.stringResource
 import com.sem.nutrix.R
 
 @Composable
 fun GoogleButton(
     modifier: Modifier = Modifier,
     loadingState: Boolean = false,
-    primaryText: String = "Sign in with Google",
-    secondaryText: String = "Please wait...",
+    primaryText: String,
+    secondaryText: String = stringResource(id = R.string.google_sec_text),
     icon: Int = R.drawable.google_app_logo,
     shape: Shape = Shapes().extraSmall,
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
@@ -88,11 +89,11 @@ fun GoogleButton(
 @Composable
 @Preview
 fun GoogleButtonPreview() {
-    GoogleButton {}
+    GoogleButton(primaryText = stringResource(id = R.string.google_sign_up)) {}
 }
 
-@Composable
-@Preview
-fun GoogleButtonPreview2() {
-    GoogleButton(loadingState = true) {}
-}
+//@Composable
+//@Preview
+//fun GoogleButtonPreview2() {
+//    GoogleButton(loadingState = true, primaryText = stringResource(id = R.string.google_sign_up) {}
+//}
