@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.sem.nutrix.presentation.screens.login.LoginScreen
 import com.sem.nutrix.util.Constants.CLIENT_ID
 import com.stevdzasan.messagebar.ContentWithMessageBar
 import com.stevdzasan.messagebar.MessageBarState
@@ -40,11 +41,16 @@ fun AuthScreen(
             .navigationBarsPadding(),
         content = {
             ContentWithMessageBar(messageBarState = messageBarState) {
-                AuthContent(
-                    loadingState = loadingState,
+               /*AuthContent(
+                   loadingState = loadingState,
                     onButtonClicked = onButtonClicked,
                     onRegisterButtonClicked = onRegisterButtonClicked
-                )
+                )*/
+               LoginScreen(
+                   loadingState = loadingState,
+                   onButtonClicked = onButtonClicked,
+                   onRegisterButtonClicked = onRegisterButtonClicked
+               )
             }
         }
     )

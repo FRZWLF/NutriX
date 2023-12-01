@@ -48,6 +48,8 @@ import com.sem.nutrix.R
 
 @Composable
 fun Registration(
+    valueSubHeader: String,
+    valueHeader: String,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
 ) {
@@ -55,11 +57,10 @@ fun Registration(
         color = backgroundColor
     ) {
         Column(
-//            modifier = Modifier
-//                .fillMaxSize()
         ) {
             Text(
-                text = stringResource(id = R.string.auth_registration_title),
+                text = valueSubHeader,
+
                 modifier = modifier
                     .fillMaxWidth()
                     .heightIn(min = 30.dp),
@@ -72,7 +73,7 @@ fun Registration(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = R.string.auth_registration_subtitle),
+                text = valueHeader,
                 modifier = modifier
                     .fillMaxWidth()
                     .heightIn(),
@@ -333,10 +334,34 @@ fun ClickableLoginText(onTextSelected: (String) -> Unit) {
     )
 }
 
+@Composable
+fun ClickableRegistrationText(onTextSelected: (String) -> Unit) {
+    val initialText = "Don`t have an account yet? "
+    val registrationText = "Registration"
+    val annotatedString = buildAnnotatedString {
+        append(initialText)
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)){
+            pushStringAnnotation(tag = registrationText, annotation = registrationText)
+            append(registrationText)
+        }
+    }
+    androidx.compose.foundation.text.ClickableText(
+        text = annotatedString,
+        onClick = {offset ->
+            annotatedString.getStringAnnotations(offset, offset)
+                .firstOrNull()?.also {span ->
+                    Log.d("ClickableText", "{${span.item}}")
+                    if (span.item == registrationText){
+                        onTextSelected(span.item)
+                    }
+                }
 
+        }
+    )
+}
 
 @Composable
 @Preview
 fun RegistrationPreview() {
-    Registration ()
+    //Registration()
 }
