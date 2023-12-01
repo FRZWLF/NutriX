@@ -24,7 +24,7 @@ fun SetupNavGraph(
         startDestination = startDestination,
         navController = navController
     ){
-        authenticationLoginRoute(
+        authenticationRoute(
             navigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
@@ -39,7 +39,7 @@ fun SetupNavGraph(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.authenticationLoginRoute(
+fun NavGraphBuilder.authenticationRoute(
     navigateToHome: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
@@ -62,6 +62,9 @@ fun NavGraphBuilder.authenticationLoginRoute(
             onButtonClicked = {
                 oneTapState.open()
                 viewModel.setLoading(true)
+            },
+            onRegisterButtonClicked = {
+
             },
             onTokenIdReceived = { tokenId ->
                 viewModel.signInWithMongoAtlas(

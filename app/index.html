@@ -1,0 +1,39 @@
+<html>
+<head>
+
+    <!-- Install the Web SDK  with CDN-->
+    <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+    <script>
+const appId = "application-0-mttpy";
+const app = new Realm.App({ id:appId});
+
+//Get Tokens from the url
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+const tokenId = params.get('tokenId');
+
+//Confirm email
+app.emailPasswordAuth
+    .confirmUser(token, tokenId)
+    .then(() => displayResult('success'))
+    .catch(err => displayResult('error', err))
+
+//Display Message depending on result
+function displayResult(result, err) {
+    const message = document.getElementById("message");
+    if (result === "success") {
+        message.innerText = "Your email has been verified.You can close this page and connect to the app. Thank you.";
+    }
+   else if (result === "error") {
+       message.innerText = err;
+   }
+}
+</script>
+
+    <title>Confirm your email!</title>
+</head>
+<body>
+<h1>Email Confirmation</h1>
+    <h5 id = "message"></h5>
+</body>
+</html>

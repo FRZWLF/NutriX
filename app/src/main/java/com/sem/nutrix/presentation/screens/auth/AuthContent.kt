@@ -22,7 +22,8 @@ import okhttp3.Route
 @Composable
 fun AuthContent(
     loadingState: Boolean,
-    onButtonClicked: () -> Unit
+    onButtonClicked: () -> Unit,
+    onRegisterButtonClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -76,7 +77,11 @@ fun AuthContent(
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                ButtonComp(value = stringResource(id = R.string.register))
+                ButtonComp(
+                    value = stringResource(id = R.string.register),
+                    onClick = onRegisterButtonClicked,
+//                    RegisterWithEmailPassword()
+                )
                 Spacer(modifier = Modifier.height(5.dp))
                 DividerText()
                 Spacer(modifier = Modifier.height(5.dp))
@@ -101,11 +106,11 @@ fun AuthContent(
     }
 }
 
-@Preview
-@Composable
-fun AuthContPreview() {
-    AuthContent(loadingState = false) {
-        
-    }
-}
+//@Preview
+//@Composable
+//fun AuthContPreview() {
+//    AuthContent(loadingState = false) {
+//
+//    }
+//}
 

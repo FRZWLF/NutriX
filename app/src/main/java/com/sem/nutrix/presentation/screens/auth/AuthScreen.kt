@@ -26,6 +26,7 @@ fun AuthScreen(
     oneTapState: OneTapSignInState,
     messageBarState: MessageBarState,
     onButtonClicked: () -> Unit,
+    onRegisterButtonClicked: () -> Unit,
     onTokenIdReceived: (String) -> Unit,
 //    onSuccessfulFirebaseSignIn: (String) -> Unit,
 //    onFailedFirebaseSignIn: (Exception) -> Unit,
@@ -41,7 +42,8 @@ fun AuthScreen(
             ContentWithMessageBar(messageBarState = messageBarState) {
                 AuthContent(
                     loadingState = loadingState,
-                    onButtonClicked = onButtonClicked
+                    onButtonClicked = onButtonClicked,
+                    onRegisterButtonClicked = onRegisterButtonClicked
                 )
             }
         }
@@ -67,9 +69,22 @@ fun AuthScreen(
         }
     )
 
+//    RegisterWithEmailPassword(
+//
+//    ){
+//
+//    }
+
     LaunchedEffect(key1 = authenticated) {
         if (authenticated) {
             navigateToHome()
         }
     }
+}
+
+@Composable
+fun RegisterWithEmailPassword(
+
+) {
+
 }
