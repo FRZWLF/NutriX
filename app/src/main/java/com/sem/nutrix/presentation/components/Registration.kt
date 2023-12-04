@@ -1,7 +1,9 @@
 package com.sem.nutrix.presentation.components
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sem.nutrix.R
@@ -127,18 +130,50 @@ fun MyTextField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordMyTextField(
+fun EmailMyTextField(
     modifier: Modifier = Modifier,
     labelValue: String,
+    email: String,
+    onEmailChange: (String) -> Unit,
     painterResource: Painter,
     shape: Shape = Shapes().extraSmall,
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    val password = remember{
-        mutableStateOf("")
-    }
 
+    OutlinedTextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape),
+        label = {Text(text = labelValue)},
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = focusBorderColor,
+            focusedLabelColor = focusBorderColor,
+            cursorColor = focusBorderColor
+        ),
+        keyboardOptions = KeyboardOptions.Default,
+        value = email,
+        onValueChange = {
+            onEmailChange(it)
+        },
+        leadingIcon = {
+            Icon(painter = painterResource, contentDescription = "")
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PasswordMyTextField(
+    modifier: Modifier = Modifier,
+    labelValue: String,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    painterResource: Painter,
+    shape: Shape = Shapes().extraSmall,
+    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
     val passwordVisible = remember{
         mutableStateOf(false)
     }
@@ -154,9 +189,9 @@ fun PasswordMyTextField(
             cursorColor = focusBorderColor
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        value = password.value,
+        value = password,
         onValueChange = {
-            password.value = it
+           onPasswordChange(it)
         },
         leadingIcon = {
             Icon(painter = painterResource, contentDescription = "")
@@ -242,17 +277,31 @@ fun ClickableText(value: String, onTextSelected: (String) -> Unit) {
 
 @Composable
 fun ButtonComp(
+    modifier: Modifier = Modifier,
     value:String,
+    isLoading: Boolean = false,
+    shape: Shape = Shapes().extraSmall,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    borderStrokeWidth: Dp = 1.dp,
     onClick: () -> Unit
     ) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp),
-        contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent)
-        ){
+    Surface(
+        modifier = modifier
+            .clickable(enabled = !isLoading) { onClick() },
+        shape = shape,
+        border = BorderStroke(width = borderStrokeWidth, color = borderColor),
+        color = backgroundColor
+    ){
+//    Button(
+//        onClick = onClick,
+//        modifier = Modifier
+//            .clickable(enabled = !loadingState) { onClick() }
+//            .fillMaxWidth()
+//            .heightIn(48.dp),
+//        contentPadding = PaddingValues(),
+//        colors = ButtonDefaults.buttonColors(Color.Transparent)
+//        ){
         Box(
             modifier = Modifier
                 .fillMaxWidth()
