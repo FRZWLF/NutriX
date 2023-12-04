@@ -1,141 +1,100 @@
 package com.sem.nutrix.presentation.screens.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.sem.nutrix.R
-import com.sem.nutrix.presentation.components.ButtonComp
-import com.sem.nutrix.presentation.components.ClickableRegistrationText
-import com.sem.nutrix.presentation.components.DividerText
-import com.sem.nutrix.presentation.components.EmailMyTextField
-import com.sem.nutrix.presentation.components.GoogleButton
-import com.sem.nutrix.presentation.components.MyTextField
-import com.sem.nutrix.presentation.components.PasswordMyTextField
-import com.sem.nutrix.presentation.components.Registration
+import com.sem.nutrix.model.EmailPasswordState
+import com.sem.nutrix.presentation.screens.auth.AuthContent
 import com.sem.nutrix.presentation.screens.auth.RegisterWithEmailPassword
+import com.sem.nutrix.util.Constants.CLIENT_ID
+import com.stevdzasan.messagebar.ContentWithMessageBar
+import com.stevdzasan.messagebar.MessageBarState
+import com.stevdzasan.onetap.OneTapSignInState
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginScreen(
+    authenticated: Boolean,
+    registered: Boolean,
     loadingState: Boolean,
+    isLoading: Boolean,
+    emailPasswordState: EmailPasswordState,
+    oneTapState: OneTapSignInState,
+    messageBarState: MessageBarState,
     onButtonClicked: () -> Unit,
     onRegisterButtonClicked: () -> Unit,
-){
-    val email = remember{
-        mutableStateOf("")
-    }
+    onTokenIdReceived: (String) -> Unit,
+    onEmailPasswordReceived: (String, String) -> Unit,
+    onDialogDismissed: (String) -> Unit,
+    navigateToRegister: () -> Unit,
+    navigateToHome: () -> Unit,
+) {
 
-    val password = remember{
-        mutableStateOf("")
-    }
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Column(
-            modifier = Modifier
-                .weight(9f)
-                .fillMaxWidth()
-                .padding(all = 30.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Column(
-//                modifier = Modifier.weight(weight = 10f),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Registration(
-                    valueSubHeader = stringResource(id = R.string.auth_login_title),
-                    valueHeader = stringResource(id = R.string.auth_login_subtitle)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                //modifier = Modifier.weight(weight = 2f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                EmailMyTextField(
-                    email = email.value,
-                    onEmailChange  = {email.value = it},
-                    labelValue = stringResource(id = R.string.email),
-                    painterResource = painterResource(id = R.drawable.envelope_icon)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                PasswordMyTextField(
-                    password = password.value,
-                    onPasswordChange = {password.value = it},
-                    labelValue = stringResource(id = R.string.password),
-                    painterResource = painterResource(id = R.drawable.ic_lock)
-                )
-            }
-            Column(
-                modifier = Modifier.weight(weight = 10f),
-                verticalArrangement = Arrangement.Bottom,
-
-
-            ) {
-
-                Spacer(modifier = Modifier.height(20.dp))
-                ButtonComp(
-                    value = stringResource(id = R.string.login),
-                    onClick = onRegisterButtonClicked
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                DividerText()
-                Spacer(modifier = Modifier.height(5.dp))
-
-            }
-
-
-            Column(
-                modifier = Modifier.weight(weight = 2f),
-                verticalArrangement = Arrangement.Top
-            ) {
-                GoogleButton(
+    Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+        content = {
+            // Einbettung von ContentWithMessageBar, um Nachrichten anzuzeigen
+            ContentWithMessageBar(messageBarState = messageBarState) {
+                // AuthContent wird aufgerufen, um den eigentlichen Inhalt anzuzeigen
+                AuthContent(
                     loadingState = loadingState,
-                    onClick = onButtonClicked,
-                    primaryText = stringResource(id = R.string.google_sign_in)
+                    isLoading = isLoading,
+                    onButtonClicked = onButtonClicked,
+                    onRegisterButtonClicked = onRegisterButtonClicked
                 )
             }
-
-            ClickableRegistrationText(
-                onTextSelected = {
-                    //Router zu Login-Screen
-                }
-            )
-
-
         }
+    )
 
+    // OneTapSignInWithGoogle wird aufgerufen, um Google-Anmeldung zu unterstützen
+    OneTapSignInWithGoogle(
+        state = oneTapState,
+        clientId = CLIENT_ID,
+        onTokenIdReceived = { tokenId ->
+            // Callback-Funktion für den Empfang des Google-Token-IDs
+            onTokenIdReceived(tokenId)
+        },
+        onDialogDismissed = { message ->
+            // Callback-Funktion für das Schließen des Dialogs
+            onDialogDismissed(message)
+        }
+    )
 
+    // RegisterWithEmailPassword wird aufgerufen, um die E-Mail- und Passwort-Registrierung zu unterstützen
+    RegisterWithEmailPassword(
+        emailPasswordState = emailPasswordState,
+        onEmailPasswordReceived = { email, password ->
+            // Callback-Funktion für den Empfang von E-Mail und Passwort
+            onEmailPasswordReceived(email, password)
+        },
+        onDialogDismissed = { message ->
+            // Callback-Funktion für das Schließen des Dialogs
+            onDialogDismissed(message)
+        }
+    )
 
+    // LaunchedEffect wird verwendet, um auf Authentifizierungs- oder Registrierungsänderungen zu reagieren
+    LaunchedEffect(key1 = authenticated) {
+        if (authenticated) {
+            // Navigieren zur Home-Seite, wenn der Benutzer authentifiziert ist
+            navigateToHome()
+        }
     }
-}
 
-
-
-
-
-@Preview
-@Composable
-fun LoginScreenPreview(){
-    //LoginScreen()
+    LaunchedEffect(key1 = registered) {
+        if (registered) {
+            // Navigieren zur Registrierungsseite, wenn der Benutzer registriert ist
+            navigateToRegister()
+        }
+    }
 }
