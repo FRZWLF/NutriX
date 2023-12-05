@@ -9,9 +9,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sem.nutrix.model.EmailPasswordState
-import com.sem.nutrix.presentation.screens.auth.AuthContent
-import com.sem.nutrix.presentation.screens.auth.RegisterWithEmailPassword
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+import com.sem.nutrix.presentation.screens.auth.LoginWithEmailPassword
 import com.sem.nutrix.util.Constants.CLIENT_ID
 import com.stevdzasan.messagebar.ContentWithMessageBar
 import com.stevdzasan.messagebar.MessageBarState
@@ -22,20 +23,23 @@ import com.stevdzasan.onetap.OneTapSignInWithGoogle
 @Composable
 fun LoginScreen(
     authenticated: Boolean,
-    registered: Boolean,
+    loggedin: Boolean,
+    toRegistration: Boolean,
     loadingState: Boolean,
     isLoading: Boolean,
     emailPasswordState: EmailPasswordState,
     oneTapState: OneTapSignInState,
     messageBarState: MessageBarState,
     onButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
+    onLoginButtonClicked: () -> Unit,
+    toRegistrationClicked: () -> Unit,
     onTokenIdReceived: (String) -> Unit,
     onEmailPasswordReceived: (String, String) -> Unit,
     onDialogDismissed: (String) -> Unit,
     navigateToRegister: () -> Unit,
     navigateToHome: () -> Unit,
 ) {
+    val registrationState: AuthViewModel = viewModel()
 
     Scaffold(
         modifier = Modifier
@@ -46,11 +50,12 @@ fun LoginScreen(
             // Einbettung von ContentWithMessageBar, um Nachrichten anzuzeigen
             ContentWithMessageBar(messageBarState = messageBarState) {
                 // AuthContent wird aufgerufen, um den eigentlichen Inhalt anzuzeigen
-                AuthContent(
+                LoginContent(
                     loadingState = loadingState,
                     isLoading = isLoading,
                     onButtonClicked = onButtonClicked,
-                    onRegisterButtonClicked = onRegisterButtonClicked
+                    onLoginButtonClicked = onLoginButtonClicked,
+                    toRegistrationClicked = toRegistrationClicked
                 )
             }
         }
@@ -71,7 +76,7 @@ fun LoginScreen(
     )
 
     // RegisterWithEmailPassword wird aufgerufen, um die E-Mail- und Passwort-Registrierung zu unterstützen
-    RegisterWithEmailPassword(
+    LoginWithEmailPassword(
         emailPasswordState = emailPasswordState,
         onEmailPasswordReceived = { email, password ->
             // Callback-Funktion für den Empfang von E-Mail und Passwort
@@ -91,10 +96,19 @@ fun LoginScreen(
         }
     }
 
-    LaunchedEffect(key1 = registered) {
-        if (registered) {
+    LaunchedEffect(key1 = loggedin) {
+        if (loggedin) {
             // Navigieren zur Registrierungsseite, wenn der Benutzer registriert ist
+            navigateToHome()
+        }
+    }
+
+    LaunchedEffect(key1 = toRegistration) {
+        if (toRegistration) {
+            registrationState.setToRegistration(false)
             navigateToRegister()
         }
     }
 }
+
+

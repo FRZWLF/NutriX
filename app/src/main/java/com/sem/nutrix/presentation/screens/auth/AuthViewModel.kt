@@ -19,14 +19,23 @@ class AuthViewModel : ViewModel() {
         private set
     var registered = mutableStateOf(false)
         private set
+    var loggedin = mutableStateOf(false)
+        private set
     var loadingState = mutableStateOf(false)
         private set
     var isLoading = mutableStateOf(false)
         private set
-
     var emailState by  mutableStateOf("")
         private set
     var passwordState by mutableStateOf("")
+        private set
+    var firstNameState by  mutableStateOf("")
+        private set
+    var lastNameState by mutableStateOf("")
+        private set
+    var toLogin = mutableStateOf(false)
+        private set
+    var toRegistration = mutableStateOf(false)
         private set
 
     fun changeEmail(email: String) {
@@ -35,6 +44,22 @@ class AuthViewModel : ViewModel() {
 
     fun changePassword(password: String) {
         passwordState = password
+    }
+
+    fun changeFirstName(firstName: String) {
+        firstNameState = firstName
+    }
+
+    fun changeLastName(lastName: String) {
+        lastNameState = lastName
+    }
+
+    fun setToLogin(routing: Boolean){
+        toLogin.value = routing
+    }
+
+    fun setToRegistration(routing: Boolean){
+        toRegistration.value = routing
     }
 
     fun setLoading(loading: Boolean) {
@@ -105,5 +130,38 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+    fun EmailPasswordSignInWithMongoAtlas(
+        email:String,
+        password: String,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                Log.d("Drin", email)
+                val result = withContext(Dispatchers.IO) {
+                    val emailPasswordCredentials = Credentials.emailPassword(email, password)
+                    App.create(APP_ID).login(
+                        emailPasswordCredentials
+                    ).loggedIn
+                }
 
+                withContext(Dispatchers.Main) {
+                    if (result) {
+                        onSuccess()
+                        delay(600)
+                        loggedin.value = true
+                    } else {
+                        onError(Exception("User is not logged in."))
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onError(e)
+                }
+            }
+        }
+    }
 }
+
+

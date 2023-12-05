@@ -1,17 +1,20 @@
 package com.sem.nutrix.presentation.components
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
+import android.widget.Toast
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,31 +26,40 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sem.nutrix.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun Registration(
@@ -99,47 +111,15 @@ fun Registration(
 fun MyTextField(
     modifier: Modifier = Modifier,
     labelValue: String,
+    value: String,
+    onValueChange: (String) -> Unit,
     painterResource: Painter,
     shape: Shape = Shapes().extraSmall,
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    val textValue = remember{
-        mutableStateOf("")
-    }
-    OutlinedTextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape),
-        label = {Text(text = labelValue)},
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = focusBorderColor,
-            focusedLabelColor = focusBorderColor,
-            cursorColor = focusBorderColor
-        ),
-        keyboardOptions = KeyboardOptions.Default,
-        value = textValue.value,
-        onValueChange = {
-            textValue.value = it
-        },
-        leadingIcon = {
-            Icon(painter = painterResource, contentDescription = "")
-        },
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EmailMyTextField(
-    modifier: Modifier = Modifier,
-    labelValue: String,
-    email: String,
-    onEmailChange: (String) -> Unit,
-    painterResource: Painter,
-    shape: Shape = Shapes().extraSmall,
-    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-) {
+    val scope = rememberCoroutineScope()
+    val focuseManager = LocalFocusManager.current
 
     OutlinedTextField(
         modifier = modifier
@@ -151,16 +131,74 @@ fun EmailMyTextField(
             focusedLabelColor = focusBorderColor,
             cursorColor = focusBorderColor
         ),
-        keyboardOptions = KeyboardOptions.Default,
-        value = email,
+        value = value,
         onValueChange = {
-            onEmailChange(it)
+            onValueChange(it)
         },
         leadingIcon = {
             Icon(painter = painterResource, contentDescription = "")
         },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                scope.launch {
+                    focuseManager.moveFocus(FocusDirection.Down)
+                }
+            }
+        ),
+        maxLines = 1,
+        singleLine = true
     )
 }
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun EmailMyTextField(
+//    modifier: Modifier = Modifier,
+//    labelValue: String,
+//    email: String,
+//    onEmailChange: (String) -> Unit,
+//    painterResource: Painter,
+//    shape: Shape = Shapes().extraSmall,
+//    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+//    focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+//) {
+//    val scope = rememberCoroutineScope()
+//    val focuseManager = LocalFocusManager.current
+//
+//    OutlinedTextField(
+//        modifier = modifier
+//            .fillMaxWidth()
+//            .clip(shape),
+//        label = {Text(text = labelValue)},
+//        colors = TextFieldDefaults.outlinedTextFieldColors(
+//            focusedBorderColor = focusBorderColor,
+//            focusedLabelColor = focusBorderColor,
+//            cursorColor = focusBorderColor
+//        ),
+//        value = email,
+//        onValueChange = {
+//            onEmailChange(it)
+//        },
+//        leadingIcon = {
+//            Icon(painter = painterResource, contentDescription = "")
+//        },
+//        keyboardOptions = KeyboardOptions(
+//            imeAction = ImeAction.Next
+//        ),
+//        keyboardActions = KeyboardActions(
+//            onNext = {
+//                scope.launch {
+//                    focuseManager.moveFocus(FocusDirection.Down)
+//                }
+//            }
+//        ),
+//        maxLines = 1,
+//        singleLine = true
+//    )
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,6 +212,8 @@ fun PasswordMyTextField(
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
+    val scope = rememberCoroutineScope()
+    val focuseManager = LocalFocusManager.current
     val passwordVisible = remember{
         mutableStateOf(false)
     }
@@ -188,7 +228,10 @@ fun PasswordMyTextField(
             focusedLabelColor = focusBorderColor,
             cursorColor = focusBorderColor
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Next
+        ),
         value = password,
         onValueChange = {
            onPasswordChange(it)
@@ -213,13 +256,24 @@ fun PasswordMyTextField(
                 Icon(imageVector = iconImage, contentDescription = description)
             }
         },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                scope.launch {
+                    focuseManager.moveFocus(FocusDirection.Down)
+                }
+            }
+        ),
+        maxLines = 1,
+        singleLine = true
     )
 }
 
 @Composable
 fun Checkbox(
     value: String,
+    checkedState: MutableState<Boolean>,
+    onCheckedStateChanged: (Boolean) -> Unit,
     onTextSelected: (String) -> Unit
 ) {
     Row(
@@ -228,13 +282,10 @@ fun Checkbox(
             .heightIn(56.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
-        val checkedState = remember {
-            mutableStateOf(false)
-        }
         androidx.compose.material3.Checkbox(
             checked = checkedState.value,
             onCheckedChange = {
-                checkedState.value = !checkedState.value
+                onCheckedStateChanged(!checkedState.value)
             }
         )
 
@@ -276,33 +327,49 @@ fun ClickableText(value: String, onTextSelected: (String) -> Unit) {
 }
 
 @Composable
-fun ButtonComp(
+fun RegistrationButtonComp(
     modifier: Modifier = Modifier,
     value:String,
+    firstName: String,
+    lastName: String,
+    email: String,
+    password: String,
+    checked: Boolean,
     isLoading: Boolean = false,
-    shape: Shape = Shapes().extraSmall,
+    secondaryText: String = stringResource(id = R.string.google_sec_text),
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    borderStrokeWidth: Dp = 1.dp,
+    progressIndicatorColor: Color = MaterialTheme.colorScheme.onPrimary,
     onClick: () -> Unit
     ) {
+    val context = LocalContext.current
+    var buttonText by remember { mutableStateOf(value) }
+
+    LaunchedEffect(key1 = isLoading) {
+        buttonText = if (isLoading) secondaryText else value
+    }
+
     Surface(
         modifier = modifier
-            .clickable(enabled = !isLoading) { onClick() },
-        shape = shape,
-        border = BorderStroke(width = borderStrokeWidth, color = borderColor),
+            .clickable(enabled = !isLoading) {
+                if (email.isNotEmpty() && password.isNotEmpty() && firstName.isNotEmpty() && lastName.isNotEmpty() && checked) {
+                    onClick()
+                } else if (email.isNotEmpty() && password.isNotEmpty() && firstName.isNotEmpty() && lastName.isNotEmpty() && !checked) {
+                    Toast.makeText(
+                        context,
+                        "Accept our Term of Use.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Fields cannot be empty.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                                             },
         color = backgroundColor
     ){
-//    Button(
-//        onClick = onClick,
-//        modifier = Modifier
-//            .clickable(enabled = !loadingState) { onClick() }
-//            .fillMaxWidth()
-//            .heightIn(48.dp),
-//        contentPadding = PaddingValues(),
-//        colors = ButtonDefaults.buttonColors(Color.Transparent)
-//        ){
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(48.dp)
@@ -314,14 +381,106 @@ fun ButtonComp(
                         )
                     ),
                     shape = RoundedCornerShape(50.dp)
+                )
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 1200,
+                        easing = LinearOutSlowInEasing
+                    )
                 ),
-            contentAlignment = Alignment.Center
-        ) {
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ){
             Text(
-                text = value,
+                text = buttonText,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
             )
+            if (isLoading) {
+                Spacer(modifier = Modifier.width(16.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = progressIndicatorColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LoginButtonComp(
+    modifier: Modifier = Modifier,
+    value:String,
+    email: String,
+    password: String,
+    isLoading: Boolean = false,
+    secondaryText: String = stringResource(id = R.string.google_sec_text),
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    progressIndicatorColor: Color = MaterialTheme.colorScheme.onPrimary,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+    var buttonText by remember { mutableStateOf(value) }
+
+    LaunchedEffect(key1 = isLoading) {
+        buttonText = if (isLoading) secondaryText else value
+    }
+
+    Surface(
+        modifier = modifier
+            .clickable(enabled = !isLoading) {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    onClick()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Fields cannot be empty.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            },
+        color = backgroundColor
+    ){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp)
+                .background(
+                    brush = Brush.horizontalGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.secondary
+                        )
+                    ),
+                    shape = RoundedCornerShape(50.dp)
+                )
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 600,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ){
+            Text(
+                text = buttonText,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+            if (isLoading) {
+                Spacer(modifier = Modifier.width(16.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = progressIndicatorColor
+                )
+            }
         }
     }
 }
@@ -358,7 +517,7 @@ fun DividerText() {
 }
 
 @Composable
-fun ClickableLoginText(onTextSelected: (String) -> Unit) {
+fun ClickableLoginText(onTextSelected: () -> Unit) {
     val initialText = "Already have an account? "
     val loginText = "Login"
     val annotatedString = buildAnnotatedString {
@@ -375,7 +534,7 @@ fun ClickableLoginText(onTextSelected: (String) -> Unit) {
                 .firstOrNull()?.also {span ->
                     Log.d("ClickableText", "{${span.item}}")
                     if (span.item == loginText){
-                        onTextSelected(span.item)
+                        onTextSelected()//span.item
                     }
                 }
 
@@ -384,7 +543,7 @@ fun ClickableLoginText(onTextSelected: (String) -> Unit) {
 }
 
 @Composable
-fun ClickableRegistrationText(onTextSelected: (String) -> Unit) {
+fun ClickableRegistrationText(onTextSelected: () -> Unit) {
     val initialText = "Don`t have an account yet? "
     val registrationText = "Registration"
     val annotatedString = buildAnnotatedString {
@@ -401,7 +560,7 @@ fun ClickableRegistrationText(onTextSelected: (String) -> Unit) {
                 .firstOrNull()?.also {span ->
                     Log.d("ClickableText", "{${span.item}}")
                     if (span.item == registrationText){
-                        onTextSelected(span.item)
+                        onTextSelected()
                     }
                 }
 

@@ -10,9 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.sem.nutrix.presentation.screens.auth.AuthViewModel
-import com.sem.nutrix.presentation.screens.auth.LoginScreen
 import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
 import com.sem.nutrix.presentation.screens.auth.rememberEmailPasswordState
+import com.sem.nutrix.presentation.screens.login.LoginScreen
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 
@@ -36,7 +36,7 @@ fun SetupNavGraph(
         loginRoute(
             navigateToRegister = {
                 navController.popBackStack()
-                navController.navigate(Screen.Login.route)
+                navController.navigate(Screen.Registration.route)
             },
             navigateToHome = {
                 navController.popBackStack()
@@ -62,6 +62,7 @@ fun NavGraphBuilder.registrationRoute(
         val registered by viewModel.registered
         val loadingState by viewModel.loadingState
         val isLoading by viewModel.isLoading
+        val toLogin by viewModel.toLogin
         val oneTapState = rememberOneTapSignInState()
         val emailPasswordState = rememberEmailPasswordState()
         val messageBarState = rememberMessageBarState()
@@ -73,6 +74,7 @@ fun NavGraphBuilder.registrationRoute(
         RegistrationScreen(
             authenticated = authenticated,
             registered = registered,
+            toLogin = toLogin,
             loadingState = loadingState,
             isLoading = isLoading,
             oneTapState = oneTapState,
@@ -85,6 +87,9 @@ fun NavGraphBuilder.registrationRoute(
             onRegisterButtonClicked = {
                 emailPasswordState.open()
                 viewModel.setIsLoading(true)
+            },
+            toLoginClicked = {
+                viewModel.setToLogin(true)
             },
             onTokenIdReceived = { tokenId ->
                 viewModel.signInWithMongoAtlas(
@@ -122,7 +127,6 @@ fun NavGraphBuilder.registrationRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.loginRoute(
     navigateToRegister: () -> Unit,
     navigateToHome: () -> Unit,
@@ -131,9 +135,10 @@ fun NavGraphBuilder.loginRoute(
     composable(route = Screen.Login.route) {
         val viewModel: AuthViewModel = viewModel()
         val authenticated by viewModel.authenticated
-        val registered by viewModel.registered
+        val loggedin by viewModel.loggedin
         val loadingState by viewModel.loadingState
         val isLoading by viewModel.isLoading
+        val toRegistration by viewModel.toRegistration
         val oneTapState = rememberOneTapSignInState()
         val emailPasswordState = rememberEmailPasswordState()
         val messageBarState = rememberMessageBarState()
@@ -144,7 +149,8 @@ fun NavGraphBuilder.loginRoute(
 
         LoginScreen(
             authenticated = authenticated,
-            registered = registered,
+            loggedin = loggedin,
+            toRegistration = toRegistration,
             loadingState = loadingState,
             isLoading = isLoading,
             oneTapState = oneTapState,
@@ -154,9 +160,12 @@ fun NavGraphBuilder.loginRoute(
                 oneTapState.open()
                 viewModel.setLoading(true)
             },
-            onRegisterButtonClicked = {
+            onLoginButtonClicked = {
                 emailPasswordState.open()
                 viewModel.setIsLoading(true)
+            },
+            toRegistrationClicked =  {
+                viewModel.setToRegistration(true)
             },
             onTokenIdReceived = { tokenId ->
                 viewModel.signInWithMongoAtlas(
@@ -172,11 +181,11 @@ fun NavGraphBuilder.loginRoute(
                 )
             },
             onEmailPasswordReceived = { email, password ->
-                viewModel.signUpWithMongoAtlas(
+                viewModel.EmailPasswordSignInWithMongoAtlas(
                     email = email,
                     password = password,
                     onSuccess = {
-                        messageBarState.addSuccess("Successfully Registrated!")
+                        messageBarState.addSuccess("Successfully Loggedin!")
                         viewModel.setIsLoading(false)
                     },
                     onError = {

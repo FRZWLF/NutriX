@@ -13,26 +13,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sem.nutrix.R
-import com.sem.nutrix.presentation.components.ButtonComp
 import com.sem.nutrix.presentation.components.ClickableRegistrationText
 import com.sem.nutrix.presentation.components.DividerText
-import com.sem.nutrix.presentation.components.EmailMyTextField
 import com.sem.nutrix.presentation.components.GoogleButton
+import com.sem.nutrix.presentation.components.LoginButtonComp
 import com.sem.nutrix.presentation.components.MyTextField
 import com.sem.nutrix.presentation.components.PasswordMyTextField
 import com.sem.nutrix.presentation.components.Registration
-import com.sem.nutrix.presentation.screens.auth.RegisterWithEmailPassword
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 
 
 @Composable
 fun LoginContent(
     loadingState: Boolean,
+    isLoading: Boolean,
     onButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
+    onLoginButtonClicked: () -> Unit,
+    toRegistrationClicked: () -> Unit
 ){
+    val emailPassword: AuthViewModel = viewModel()
     val email = remember{
         mutableStateOf("")
     }
@@ -40,6 +42,10 @@ fun LoginContent(
     val password = remember{
         mutableStateOf("")
     }
+
+    emailPassword.changeEmail(email.value)
+    emailPassword.changePassword(password.value)
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,9 +78,9 @@ fun LoginContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                EmailMyTextField(
-                    email = email.value,
-                    onEmailChange  = {email.value = it},
+                MyTextField(
+                    value = email.value,
+                    onValueChange  = {email.value = it},
                     labelValue = stringResource(id = R.string.email),
                     painterResource = painterResource(id = R.drawable.envelope_icon)
                 )
@@ -94,17 +100,18 @@ fun LoginContent(
                 ) {
 
                 Spacer(modifier = Modifier.height(20.dp))
-                ButtonComp(
+                LoginButtonComp(
                     value = stringResource(id = R.string.login),
-                    onClick = onRegisterButtonClicked
+                    email = email.value,
+                    password = password.value,
+                    isLoading = isLoading,
+                    onClick = onLoginButtonClicked
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 DividerText()
                 Spacer(modifier = Modifier.height(5.dp))
 
             }
-
-
             Column(
                 modifier = Modifier.weight(weight = 2f),
                 verticalArrangement = Arrangement.Top
@@ -115,11 +122,9 @@ fun LoginContent(
                     primaryText = stringResource(id = R.string.google_sign_in)
                 )
             }
-
+            Spacer(modifier = Modifier.height(32.dp))
             ClickableRegistrationText(
-                onTextSelected = {
-                    //Router zum Registration-Screen
-                }
+                onTextSelected = toRegistrationClicked
             )
 
 

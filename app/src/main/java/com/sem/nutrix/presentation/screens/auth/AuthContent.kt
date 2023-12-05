@@ -8,41 +8,48 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sem.nutrix.R
-import com.sem.nutrix.presentation.components.ButtonComp
 import com.sem.nutrix.presentation.components.Checkbox
 import com.sem.nutrix.presentation.components.ClickableLoginText
 import com.sem.nutrix.presentation.components.DividerText
-import com.sem.nutrix.presentation.components.EmailMyTextField
 import com.sem.nutrix.presentation.components.GoogleButton
 import com.sem.nutrix.presentation.components.MyTextField
 import com.sem.nutrix.presentation.components.PasswordMyTextField
 import com.sem.nutrix.presentation.components.Registration
-//var Email: String = ""
-//var Password: String = ""
+import com.sem.nutrix.presentation.components.RegistrationButtonComp
+
 @Composable
 fun AuthContent(
     loadingState: Boolean,
     isLoading: Boolean,
     onButtonClicked: () -> Unit,
     onRegisterButtonClicked: () -> Unit,
+    toLoginClicked: () -> Unit
 ) {
-    val emailPassword: AuthViewModel = viewModel()
+    val viewModel: AuthViewModel = viewModel()
     val email = remember{
         mutableStateOf("")
     }
-
     val password = remember{
         mutableStateOf("")
     }
+    val firstName = remember{
+        mutableStateOf("")
+    }
+    val lastName = remember{
+        mutableStateOf("")
+    }
+    val checkedState = remember {
+        mutableStateOf(false)
+    }
 
-    emailPassword.changeEmail(email.value)
-    emailPassword.changePassword(password.value)
-//    Email = email.value
-//    Password = password.value
+    viewModel.changeEmail(email.value)
+    viewModel.changePassword(password.value)
+    viewModel.changeFirstName(firstName.value)
+    viewModel.changeLastName(lastName.value)
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -74,20 +81,24 @@ fun AuthContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 MyTextField(
+                    value = firstName.value,
+                    onValueChange = {firstName.value = it},
                     labelValue = stringResource(id = R.string.first_name),
                     painterResource = painterResource(id = R.drawable.user_profile)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 MyTextField(
+                    value = lastName.value,
+                    onValueChange = {lastName.value = it},
                     labelValue = stringResource(id = R.string.last_name),
                     painterResource = painterResource(id = R.drawable.user_profile)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
-                EmailMyTextField(
-                    email = email.value,
-                    onEmailChange  = {email.value = it},
-                        labelValue = stringResource(id = R.string.email),
-                        painterResource = painterResource(id = R.drawable.envelope_icon)
+                MyTextField(
+                    value = email.value,
+                    onValueChange  = {email.value = it},
+                    labelValue = stringResource(id = R.string.email),
+                    painterResource = painterResource(id = R.drawable.envelope_icon)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 PasswordMyTextField(
@@ -98,16 +109,22 @@ fun AuthContent(
                 )
                 Checkbox(
                     value = stringResource(id = R.string.terms_and_conditions),
-                    onTextSelected = {
-                        //er will router machen zu einer Terms Seite?!
-                    }
-                )
+                    checkedState = checkedState,
+                    onCheckedStateChanged = { checkedState.value = it }
+                ) {
+
+                }
+
                 Spacer(modifier = Modifier.height(20.dp))
-                ButtonComp(
+                RegistrationButtonComp(
                     value = stringResource(id = R.string.register),
+                    firstName = firstName.value,
+                    lastName = lastName.value,
+                    email = email.value,
+                    password = password.value,
+                    checked = checkedState.value,
                     isLoading = isLoading,
                     onClick = onRegisterButtonClicked
-                    //RegisterWithEmailPassword(email.value, password.value)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 DividerText()
@@ -125,9 +142,7 @@ fun AuthContent(
                 )
             }
             ClickableLoginText(
-                onTextSelected = {
-                    //Router zu Login-Screen
-                }
+                onTextSelected = toLoginClicked
             )
         }
     }
