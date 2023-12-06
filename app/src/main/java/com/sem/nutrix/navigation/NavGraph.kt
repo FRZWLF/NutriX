@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 import com.sem.nutrix.presentation.screens.home.HomeScreen
 import com.sem.nutrix.util.Constants.APP_ID
 import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+import com.sem.nutrix.presentation.screens.login.LoginScreen
 
 @Composable
 fun SetupNavGraph(

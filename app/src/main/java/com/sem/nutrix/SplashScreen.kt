@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieListener
+//import com.airbnb.lottie.LottieListener
 
 
 class SplashScreen : AppCompatActivity() {
