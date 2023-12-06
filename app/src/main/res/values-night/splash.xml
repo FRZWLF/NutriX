@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NutriX.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#141F00</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logologo</item>
+        <item name="postSplashScreenTheme">@style/Theme.NutriX</item>
+    </style>
+</resources>
