@@ -9,8 +9,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sem.nutrix.presentation.screens.auth.AuthScreen
 import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
+import com.sem.nutrix.presentation.screens.auth.rememberEmailPasswordState
+import com.sem.nutrix.presentation.screens.login.LoginScreen
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 
@@ -24,7 +26,18 @@ fun SetupNavGraph(
         startDestination = startDestination,
         navController = navController
     ){
-        authenticationRoute(
+        registrationRoute(
+            navigateToLogin = {
+                navController.popBackStack()
+                navController.navigate(Screen.Login.route)
+            },
+            onDataLoaded = onDataLoaded
+        )
+        loginRoute(
+            navigateToRegister = {
+                navController.popBackStack()
+                navController.navigate(Screen.Registration.route)
+            },
             navigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
@@ -39,32 +52,44 @@ fun SetupNavGraph(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.authenticationRoute(
-    navigateToHome: () -> Unit,
+fun NavGraphBuilder.registrationRoute(
+    navigateToLogin: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
-    composable(route = Screen.Authentication.route) {
+    composable(route = Screen.Registration.route) {
         val viewModel: AuthViewModel = viewModel()
         val authenticated by viewModel.authenticated
+        val registered by viewModel.registered
         val loadingState by viewModel.loadingState
+        val isLoading by viewModel.isLoading
+        val toLogin by viewModel.toLogin
         val oneTapState = rememberOneTapSignInState()
+        val emailPasswordState = rememberEmailPasswordState()
         val messageBarState = rememberMessageBarState()
 
         LaunchedEffect(key1 = Unit) {
             onDataLoaded()
         }
 
-        AuthScreen(
+        RegistrationScreen(
             authenticated = authenticated,
+            registered = registered,
+            toLogin = toLogin,
             loadingState = loadingState,
+            isLoading = isLoading,
             oneTapState = oneTapState,
+            emailPasswordState = emailPasswordState,
             messageBarState = messageBarState,
             onButtonClicked = {
                 oneTapState.open()
                 viewModel.setLoading(true)
             },
             onRegisterButtonClicked = {
-
+                emailPasswordState.open()
+                viewModel.setIsLoading(true)
+            },
+            toLoginClicked = {
+                viewModel.setToLogin(true)
             },
             onTokenIdReceived = { tokenId ->
                 viewModel.signInWithMongoAtlas(
@@ -79,41 +104,130 @@ fun NavGraphBuilder.authenticationRoute(
                     }
                 )
             },
+            onEmailPasswordReceived = { email, password ->
+                viewModel.signUpWithMongoAtlas(
+                    email = email,
+                    password = password,
+                    onSuccess = {
+                        messageBarState.addSuccess("Successfully Registrated!")
+                        viewModel.setIsLoading(false)
+                    },
+                    onError = {
+                        messageBarState.addError(it)
+                        viewModel.setIsLoading(false)
+                    }
+                )
+            },
             onDialogDismissed = { message ->
                 messageBarState.addError(Exception(message))
                 viewModel.setLoading(false)
             },
+            navigateToLogin = navigateToLogin
+        )
+    }
+}
+
+fun NavGraphBuilder.loginRoute(
+    navigateToRegister: () -> Unit,
+    navigateToHome: () -> Unit,
+    onDataLoaded: () -> Unit
+){
+    composable(route = Screen.Login.route) {
+        val viewModel: AuthViewModel = viewModel()
+        val authenticated by viewModel.authenticated
+        val loggedin by viewModel.loggedin
+        val loadingState by viewModel.loadingState
+        val isLoading by viewModel.isLoading
+        val toRegistration by viewModel.toRegistration
+        val oneTapState = rememberOneTapSignInState()
+        val emailPasswordState = rememberEmailPasswordState()
+        val messageBarState = rememberMessageBarState()
+
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
+
+        LoginScreen(
+            authenticated = authenticated,
+            loggedin = loggedin,
+            toRegistration = toRegistration,
+            loadingState = loadingState,
+            isLoading = isLoading,
+            oneTapState = oneTapState,
+            emailPasswordState = emailPasswordState,
+            messageBarState = messageBarState,
+            onButtonClicked = {
+                oneTapState.open()
+                viewModel.setLoading(true)
+            },
+            onLoginButtonClicked = {
+                emailPasswordState.open()
+                viewModel.setIsLoading(true)
+            },
+            toRegistrationClicked =  {
+                viewModel.setToRegistration(true)
+            },
+            onTokenIdReceived = { tokenId ->
+                viewModel.signInWithMongoAtlas(
+                    tokenId = tokenId,
+                    onSuccess = {
+                        messageBarState.addSuccess("Successfully Authenticated!")
+                        viewModel.setLoading(false)
+                    },
+                    onError = {
+                        messageBarState.addError(it)
+                        viewModel.setLoading(false)
+                    }
+                )
+            },
+            onEmailPasswordReceived = { email, password ->
+                viewModel.EmailPasswordSignInWithMongoAtlas(
+                    email = email,
+                    password = password,
+                    onSuccess = {
+                        messageBarState.addSuccess("Successfully Loggedin!")
+                        viewModel.setIsLoading(false)
+                    },
+                    onError = {
+                        messageBarState.addError(it)
+                        viewModel.setIsLoading(false)
+                    }
+                )
+            },
+            onDialogDismissed = { message ->
+                messageBarState.addError(Exception(message))
+                viewModel.setLoading(false)
+            },
+            navigateToRegister = navigateToRegister,
             navigateToHome = navigateToHome
         )
     }
 }
 
 
-fun NavGraphBuilder.homeRoute(){
+fun NavGraphBuilder.homeRoute() {
     composable(route = Screen.Home.route) {
 
     }
 }
 
-
-
 fun NavGraphBuilder.productaddRoute(){
-//    composable(
-      //  route = Screen.Add.route,
+    composable(
+        route = Screen.ProductAdd.route,
        // arguments = listOf(navArgument(name = ADD_SCREEN_ARGUMENT_KEY) {
        //     type = NavType.StringType
        //     nullable = true
        //     defaultValue = null
        // })
-   // ) {
+    ) {
 
-   // }
+    }
 }
 
 fun NavGraphBuilder.mealRoute(){
-   // composable(route = Screen.Meal.route) {
+    composable(route = Screen.MealProductList.route) {
 
-    //}
+    }
 }
 
 fun NavGraphBuilder.barcodeRoute(){

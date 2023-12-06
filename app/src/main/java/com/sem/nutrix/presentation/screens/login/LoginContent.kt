@@ -1,6 +1,11 @@
-package com.sem.nutrix.presentation.screens.auth
+package com.sem.nutrix.presentation.screens.login
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,50 +16,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sem.nutrix.R
-import com.sem.nutrix.presentation.components.Checkbox
-import com.sem.nutrix.presentation.components.ClickableLoginText
+import com.sem.nutrix.presentation.components.ClickableRegistrationText
 import com.sem.nutrix.presentation.components.DividerText
 import com.sem.nutrix.presentation.components.GoogleButton
+import com.sem.nutrix.presentation.components.LoginButtonComp
 import com.sem.nutrix.presentation.components.MyTextField
 import com.sem.nutrix.presentation.components.PasswordMyTextField
 import com.sem.nutrix.presentation.components.Registration
-import com.sem.nutrix.presentation.components.RegistrationButtonComp
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+
 
 @Composable
-fun AuthContent(
+fun LoginContent(
     loadingState: Boolean,
     isLoading: Boolean,
     onButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
-    toLoginClicked: () -> Unit
-) {
-    val viewModel: AuthViewModel = viewModel()
+    onLoginButtonClicked: () -> Unit,
+    toRegistrationClicked: () -> Unit
+){
+    val emailPassword: AuthViewModel = viewModel()
     val email = remember{
         mutableStateOf("")
     }
+
     val password = remember{
         mutableStateOf("")
     }
-    val firstName = remember{
-        mutableStateOf("")
-    }
-    val lastName = remember{
-        mutableStateOf("")
-    }
-    val checkedState = remember {
-        mutableStateOf(false)
-    }
 
-    viewModel.changeEmail(email.value)
-    viewModel.changePassword(password.value)
-    viewModel.changeFirstName(firstName.value)
-    viewModel.changeLastName(lastName.value)
-
+    emailPassword.changeEmail(email.value)
+    emailPassword.changePassword(password.value)
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Column(
             modifier = Modifier
                 .weight(9f)
@@ -68,31 +64,19 @@ fun AuthContent(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Registration(
-                   valueSubHeader = stringResource(id = R.string.auth_registration_title),
-                    valueHeader = stringResource(id = R.string.auth_registration_subtitle)
-                )
 
+                Registration(
+                    valueSubHeader = stringResource(id = R.string.auth_login_title),
+                    valueHeader = stringResource(id = R.string.auth_login_subtitle)
+                )
             }
+
             Spacer(modifier = Modifier.height(10.dp))
             Column(
-//                modifier = Modifier.weight(weight = 10f),
-                verticalArrangement = Arrangement.Top,
+                //modifier = Modifier.weight(weight = 2f),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MyTextField(
-                    value = firstName.value,
-                    onValueChange = {firstName.value = it},
-                    labelValue = stringResource(id = R.string.first_name),
-                    painterResource = painterResource(id = R.drawable.user_profile)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                MyTextField(
-                    value = lastName.value,
-                    onValueChange = {lastName.value = it},
-                    labelValue = stringResource(id = R.string.last_name),
-                    painterResource = painterResource(id = R.drawable.user_profile)
-                )
                 Spacer(modifier = Modifier.height(5.dp))
                 MyTextField(
                     value = email.value,
@@ -107,30 +91,27 @@ fun AuthContent(
                     labelValue = stringResource(id = R.string.password),
                     painterResource = painterResource(id = R.drawable.ic_lock)
                 )
-                Checkbox(
-                    value = stringResource(id = R.string.terms_and_conditions),
-                    checkedState = checkedState,
-                    onCheckedStateChanged = { checkedState.value = it }
+            }
+            Column(
+                modifier = Modifier.weight(weight = 10f),
+                verticalArrangement = Arrangement.Bottom,
+
+
                 ) {
 
-                }
-
                 Spacer(modifier = Modifier.height(20.dp))
-                RegistrationButtonComp(
-                    value = stringResource(id = R.string.register),
-                    firstName = firstName.value,
-                    lastName = lastName.value,
+                LoginButtonComp(
+                    value = stringResource(id = R.string.login),
                     email = email.value,
                     password = password.value,
-                    checked = checkedState.value,
                     isLoading = isLoading,
-                    onClick = onRegisterButtonClicked
+                    onClick = onLoginButtonClicked
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 DividerText()
                 Spacer(modifier = Modifier.height(5.dp))
-            }
 
+            }
             Column(
                 modifier = Modifier.weight(weight = 2f),
                 verticalArrangement = Arrangement.Top
@@ -138,21 +119,29 @@ fun AuthContent(
                 GoogleButton(
                     loadingState = loadingState,
                     onClick = onButtonClicked,
-                    primaryText = stringResource(id = R.string.google_sign_up)
+                    primaryText = stringResource(id = R.string.google_sign_in)
                 )
             }
-            ClickableLoginText(
-                onTextSelected = toLoginClicked
+            Spacer(modifier = Modifier.height(32.dp))
+            ClickableRegistrationText(
+                onTextSelected = toRegistrationClicked
             )
+
+
         }
+
+
+
     }
 }
 
+
+
+
+
 //@Preview
 //@Composable
-//fun AuthContPreview() {
-//    AuthContent(loadingState = false) {
-//
-//    }
-//}
+//fun LoginContentPreview(){
 
+    //LoginContent()
+//}

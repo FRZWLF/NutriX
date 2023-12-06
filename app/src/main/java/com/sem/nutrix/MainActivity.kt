@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
             NutriXTheme {
                 val navController = rememberNavController()
                 SetupNavGraph(
-                    startDestination = Screen.Authentication.route,
+                    startDestination = Screen.Registration.route,
                     navController = navController,
                     onDataLoaded = {
 
@@ -33,5 +33,5 @@ class MainActivity : ComponentActivity() {
 private fun getStartDestination(): String {
     val user = App.create(Constants.APP_ID).currentUser
     return if (user != null && user.loggedIn) Screen.Home.route
-    else Screen.Authentication.route
+    else Screen.Registration.route
 }

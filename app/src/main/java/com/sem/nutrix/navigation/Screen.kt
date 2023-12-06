@@ -3,7 +3,8 @@ package com.sem.nutrix.navigation
 import com.sem.nutrix.util.Constants.ADD_SCREEN_ARGUMENT_KEY
 
 sealed class Screen(val route: String) {
-    object Authentication: Screen(route = "authentication_screen")
+    object Registration: Screen(route = "registration_screen")
+    object Login: Screen(route = "login_screen")
     object TermsAndConditions: Screen(route = "terms-and-conditions_screen")
     object Home: Screen(route = "home_screen")
     object ProductAdd: Screen(route = "Add_screen?$ADD_SCREEN_ARGUMENT_KEY=" +

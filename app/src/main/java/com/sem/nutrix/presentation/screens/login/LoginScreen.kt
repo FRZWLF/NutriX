@@ -1,129 +1,114 @@
 package com.sem.nutrix.presentation.screens.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.sem.nutrix.R
-import com.sem.nutrix.presentation.components.ButtonComp
-import com.sem.nutrix.presentation.components.ClickableLoginText
-import com.sem.nutrix.presentation.components.ClickableRegistrationText
-import com.sem.nutrix.presentation.components.DividerText
-import com.sem.nutrix.presentation.components.GoogleButton
-import com.sem.nutrix.presentation.components.MyTextField
-import com.sem.nutrix.presentation.components.PasswordMyTextField
-import com.sem.nutrix.presentation.components.Registration
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sem.nutrix.model.EmailPasswordState
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+import com.sem.nutrix.presentation.screens.auth.LoginWithEmailPassword
+import com.sem.nutrix.util.Constants.CLIENT_ID
+import com.stevdzasan.messagebar.ContentWithMessageBar
+import com.stevdzasan.messagebar.MessageBarState
+import com.stevdzasan.onetap.OneTapSignInState
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginScreen(
+    authenticated: Boolean,
+    loggedin: Boolean,
+    toRegistration: Boolean,
     loadingState: Boolean,
+    isLoading: Boolean,
+    emailPasswordState: EmailPasswordState,
+    oneTapState: OneTapSignInState,
+    messageBarState: MessageBarState,
     onButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
-){
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    onLoginButtonClicked: () -> Unit,
+    toRegistrationClicked: () -> Unit,
+    onTokenIdReceived: (String) -> Unit,
+    onEmailPasswordReceived: (String, String) -> Unit,
+    onDialogDismissed: (String) -> Unit,
+    navigateToRegister: () -> Unit,
+    navigateToHome: () -> Unit,
+) {
+    val registrationState: AuthViewModel = viewModel()
 
-        Column(
-            modifier = Modifier
-                .weight(9f)
-                .fillMaxWidth()
-                .padding(all = 30.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Column(
-//                modifier = Modifier.weight(weight = 10f),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Registration(
-                    valueSubHeader = stringResource(id = R.string.auth_login_title),
-                    valueHeader = stringResource(id = R.string.auth_login_subtitle)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                //modifier = Modifier.weight(weight = 2f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                MyTextField(
-                    labelValue = stringResource(id = R.string.email),
-                    painterResource = painterResource(id = R.drawable.envelope_icon)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                PasswordMyTextField(
-                    labelValue = stringResource(id = R.string.password),
-                    painterResource = painterResource(id = R.drawable.ic_lock)
-                )
-            }
-            Column(
-                modifier = Modifier.weight(weight = 10f),
-                verticalArrangement = Arrangement.Bottom,
-
-
-            ) {
-
-                Spacer(modifier = Modifier.height(20.dp))
-                ButtonComp(
-                    value = stringResource(id = R.string.login),
-                    onClick = onRegisterButtonClicked,
-//                    RegisterWithEmailPassword()
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                DividerText()
-                Spacer(modifier = Modifier.height(5.dp))
-
-            }
-
-
-            Column(
-                modifier = Modifier.weight(weight = 2f),
-                verticalArrangement = Arrangement.Top
-            ) {
-                GoogleButton(
+    Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+        content = {
+            // Einbettung von ContentWithMessageBar, um Nachrichten anzuzeigen
+            ContentWithMessageBar(messageBarState = messageBarState) {
+                // AuthContent wird aufgerufen, um den eigentlichen Inhalt anzuzeigen
+                LoginContent(
                     loadingState = loadingState,
-                    onClick = onButtonClicked,
-                    primaryText = stringResource(id = R.string.google_sign_in)
+                    isLoading = isLoading,
+                    onButtonClicked = onButtonClicked,
+                    onLoginButtonClicked = onLoginButtonClicked,
+                    toRegistrationClicked = toRegistrationClicked
                 )
             }
-
-            ClickableRegistrationText(
-                onTextSelected = {
-                    //Router zu Login-Screen
-                }
-            )
-
-
         }
+    )
 
+    // OneTapSignInWithGoogle wird aufgerufen, um Google-Anmeldung zu unterstützen
+    OneTapSignInWithGoogle(
+        state = oneTapState,
+        clientId = CLIENT_ID,
+        onTokenIdReceived = { tokenId ->
+            // Callback-Funktion für den Empfang des Google-Token-IDs
+            onTokenIdReceived(tokenId)
+        },
+        onDialogDismissed = { message ->
+            // Callback-Funktion für das Schließen des Dialogs
+            onDialogDismissed(message)
+        }
+    )
 
+    // RegisterWithEmailPassword wird aufgerufen, um die E-Mail- und Passwort-Registrierung zu unterstützen
+    LoginWithEmailPassword(
+        emailPasswordState = emailPasswordState,
+        onEmailPasswordReceived = { email, password ->
+            // Callback-Funktion für den Empfang von E-Mail und Passwort
+            onEmailPasswordReceived(email, password)
+        },
+        onDialogDismissed = { message ->
+            // Callback-Funktion für das Schließen des Dialogs
+            onDialogDismissed(message)
+        }
+    )
 
+    // LaunchedEffect wird verwendet, um auf Authentifizierungs- oder Registrierungsänderungen zu reagieren
+    LaunchedEffect(key1 = authenticated) {
+        if (authenticated) {
+            // Navigieren zur Home-Seite, wenn der Benutzer authentifiziert ist
+            navigateToHome()
+        }
+    }
+
+    LaunchedEffect(key1 = loggedin) {
+        if (loggedin) {
+            // Navigieren zur Registrierungsseite, wenn der Benutzer registriert ist
+            navigateToHome()
+        }
+    }
+
+    LaunchedEffect(key1 = toRegistration) {
+        if (toRegistration) {
+            registrationState.setToRegistration(false)
+            navigateToRegister()
+        }
     }
 }
 
 
-
-
-
-@Preview
-@Composable
-fun LoginScreenPreview(){
-    //LoginScreen()
-}
