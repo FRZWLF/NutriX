@@ -2,4 +2,13 @@
 <resources>
 
     <style name="Theme.NutriX" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="FullScreen" parent="Theme.NutriX">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="postSplashScreenTheme">@style/Theme.NutriX</item>
+    </style>
+
 </resources>
