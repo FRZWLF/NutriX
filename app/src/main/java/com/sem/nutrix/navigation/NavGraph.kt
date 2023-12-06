@@ -1,20 +1,31 @@
 package com.sem.nutrix.navigation
 
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sem.nutrix.presentation.screens.auth.AuthViewModel
+import com.sem.nutrix.presentation.components.DisplayAlertDialog
 import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
 import com.sem.nutrix.presentation.screens.auth.rememberEmailPasswordState
-import com.sem.nutrix.presentation.screens.login.LoginScreen
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
+import io.realm.kotlin.mongodb.App
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.sem.nutrix.presentation.screens.home.HomeScreen
+import com.sem.nutrix.util.Constants.APP_ID
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 
 @Composable
 fun SetupNavGraph(
@@ -44,7 +55,15 @@ fun SetupNavGraph(
             },
             onDataLoaded = onDataLoaded
         )
-        homeRoute()
+        homeRoute(
+            navigateToProductadd = {
+                navController.navigate(Screen.ProductAdd.route)
+            },
+            navigateToAuth = {
+                navController.popBackStack()
+                navController.navigate(Screen.Login.route)
+            }
+        )
         productaddRoute()
         mealRoute()
         barcodeRoute()
@@ -205,11 +224,49 @@ fun NavGraphBuilder.loginRoute(
 }
 
 
-fun NavGraphBuilder.homeRoute() {
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.homeRoute(
+    navigateToProductadd: () -> Unit,
+    navigateToAuth: () -> Unit
+) {
     composable(route = Screen.Home.route) {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        var signOutDialogOpened by remember {mutableStateOf(false)}
+        val scope = rememberCoroutineScope()
+        HomeScreen(
+            drawerState = drawerState,
+            onMenuClicked = {
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+            onSignOutClicked = {
+               signOutDialogOpened = true
+            },
+            navigateToProductadd = navigateToProductadd
+        )
 
+        DisplayAlertDialog(
+            title = "Sign Out",
+            message = "Are you sure?",
+            dialogOpened = signOutDialogOpened,
+            onCloseDialog = {signOutDialogOpened = false},
+            onYesClicked = {
+                scope.launch(Dispatchers.IO) {
+                    val user = App.create(APP_ID).currentUser
+                    if(user != null){
+                        user.logOut()
+                        withContext(Dispatchers.Main){
+                            navigateToAuth()
+                        }
+                    }
+                }
+            }
+        )
     }
 }
+
+
 
 fun NavGraphBuilder.productaddRoute(){
     composable(
@@ -225,9 +282,9 @@ fun NavGraphBuilder.productaddRoute(){
 }
 
 fun NavGraphBuilder.mealRoute(){
-    composable(route = Screen.MealProductList.route) {
+   // composable(route = Screen.Meal.route) {
 
-    }
+    //}
 }
 
 fun NavGraphBuilder.barcodeRoute(){

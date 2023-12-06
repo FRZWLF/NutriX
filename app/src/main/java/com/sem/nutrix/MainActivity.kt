@@ -1,6 +1,5 @@
 package com.sem.nutrix
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,7 +18,7 @@ class MainActivity : ComponentActivity() {
             NutriXTheme {
                 val navController = rememberNavController()
                 SetupNavGraph(
-                    startDestination = Screen.Registration.route,
+                    startDestination = getStartDestination(),
                     navController = navController,
                     onDataLoaded = {
 
@@ -33,5 +32,5 @@ class MainActivity : ComponentActivity() {
 private fun getStartDestination(): String {
     val user = App.create(Constants.APP_ID).currentUser
     return if (user != null && user.loggedIn) Screen.Home.route
-    else Screen.Registration.route
+    else Screen.Login.route
 }
