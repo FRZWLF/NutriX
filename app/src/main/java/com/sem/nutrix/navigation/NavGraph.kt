@@ -64,7 +64,8 @@ fun SetupNavGraph(
             navigateToAuth = {
                 navController.popBackStack()
                 navController.navigate(Screen.Login.route)
-            }
+            },
+            onDataLoaded = onDataLoaded
         )
         productaddRoute()
         mealRoute()
@@ -229,12 +230,18 @@ fun NavGraphBuilder.loginRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeRoute(
     navigateToProductadd: () -> Unit,
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
+    onDataLoaded: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         var signOutDialogOpened by remember {mutableStateOf(false)}
         val scope = rememberCoroutineScope()
+
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
+
         HomeScreen(
             drawerState = drawerState,
             onMenuClicked = {

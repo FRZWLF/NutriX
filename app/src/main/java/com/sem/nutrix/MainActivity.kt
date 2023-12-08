@@ -1,6 +1,5 @@
 package com.sem.nutrix
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,7 +18,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen().setKeepOnScreenCondition{
             keepSplashOpened
         }
-
         setContent {
             NutriXTheme {
                 val navController = rememberNavController()
@@ -37,6 +35,6 @@ class MainActivity : ComponentActivity() {
 
 private fun getStartDestination(): String {
     val user = App.create(Constants.APP_ID).currentUser
-    return if (user != null && user.loggedIn) Screen.Home.route
+    return if (user != null && user.loggedIn) Screen.Home.route //Home
     else Screen.Login.route
 }
