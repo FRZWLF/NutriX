@@ -2,10 +2,12 @@ package com.sem.nutrix.presentation.screens.auth
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sem.nutrix.model.Product
 import com.sem.nutrix.util.Constants.APP_ID
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
@@ -37,6 +39,14 @@ class AuthViewModel : ViewModel() {
         private set
     var toRegistration = mutableStateOf(false)
         private set
+
+    var totalKcal by mutableIntStateOf(0)
+        private set
+
+    fun changeTestTextState(products: List<Product>) {
+        totalKcal = products.sumOf { it.kcal }
+
+    }
 
     fun changeEmail(email: String) {
         emailState = email

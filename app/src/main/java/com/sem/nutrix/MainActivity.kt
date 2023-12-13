@@ -9,8 +9,10 @@ import com.sem.nutrix.navigation.Screen
 import com.sem.nutrix.navigation.SetupNavGraph
 import com.sem.nutrix.ui.theme.NutriXTheme
 import com.sem.nutrix.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.mongodb.App
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var keepSplashOpened = true
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +21,7 @@ class MainActivity : ComponentActivity() {
             keepSplashOpened
         }
         setContent {
-            NutriXTheme {
+            NutriXTheme(dynamicColor = false) {
                 val navController = rememberNavController()
                 SetupNavGraph(
                     startDestination = getStartDestination(),
@@ -35,6 +37,6 @@ class MainActivity : ComponentActivity() {
 
 private fun getStartDestination(): String {
     val user = App.create(Constants.APP_ID).currentUser
-    return if (user != null && user.loggedIn) Screen.Home.route //Home
+    return if (user != null && user.loggedIn) Screen.MealProductList.route //Home
     else Screen.Login.route
 }

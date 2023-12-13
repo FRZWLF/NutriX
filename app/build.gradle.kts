@@ -132,4 +132,7 @@ dependencies {
 
     //Lottie Animations
     implementation("com.airbnb.android:lottie:4.2.2")
+
+//    //Circular Progress-Bar
+//    implementation("com.mikhaellopez:circularprogressbar:3.1.0")
 }

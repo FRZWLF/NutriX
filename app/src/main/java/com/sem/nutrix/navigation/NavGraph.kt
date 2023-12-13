@@ -1,5 +1,6 @@
 package com.sem.nutrix.navigation
 
+import android.widget.Toast
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
@@ -10,11 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.sem.nutrix.model.RequestState
 import com.sem.nutrix.presentation.components.DisplayAlertDialog
 import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
 import com.sem.nutrix.presentation.screens.auth.rememberEmailPasswordState
@@ -28,6 +32,8 @@ import com.sem.nutrix.presentation.screens.home.HomeScreen
 import com.sem.nutrix.util.Constants.APP_ID
 import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 import com.sem.nutrix.presentation.screens.login.LoginScreen
+import com.sem.nutrix.presentation.screens.mealList.MealListScreen
+import com.sem.nutrix.presentation.screens.mealList.MealListViewModel
 
 @Composable
 fun SetupNavGraph(
@@ -68,7 +74,19 @@ fun SetupNavGraph(
             onDataLoaded = onDataLoaded
         )
         productaddRoute()
-        mealRoute()
+        mealRoute(
+            navigateToWrite = {
+                navController.navigate(Screen.ProductAdd.route)
+            },
+            navigateToWriteWithArgs = {
+                navController.navigate(Screen.ProductAdd.passProductId(productId = it))
+            },
+            navigateBackToHome = {
+                navController.popBackStack()
+                navController.navigate(Screen.Home.route)
+            },
+            onDataLoaded = onDataLoaded
+        )
         barcodeRoute()
     }
 }
@@ -290,10 +308,79 @@ fun NavGraphBuilder.productaddRoute(){
     }
 }
 
-fun NavGraphBuilder.mealRoute(){
-   // composable(route = Screen.Meal.route) {
+fun NavGraphBuilder.mealRoute(
+    navigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit,
+    navigateBackToHome: () -> Unit,
+    onDataLoaded: () -> Unit
+){
+    composable(route = Screen.MealProductList.route) {
+        val viewModel: MealListViewModel = hiltViewModel()
+        val products by viewModel.products
+        val uiState = viewModel.uiState
+        val context = LocalContext.current
+        var deleteAllDialogOpened by remember { mutableStateOf(false) }
 
-    //}
+        LaunchedEffect(key1 = products) {
+            if (products !is RequestState.Loading) {
+                onDataLoaded()
+            }
+        }
+
+        MealListScreen(
+            uiState = uiState,
+            products = products,
+            onDeleteProduct = {
+                viewModel.deleteProduct(
+                    onSuccess = {
+                        Toast.makeText(
+                            context,
+                            "Product deleted",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    },
+                    onError = {message ->
+                        Toast.makeText(
+                            context,
+                            message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                )
+            },
+            onDeleteAllClicked = { deleteAllDialogOpened = true },
+            navigateToWrite = navigateToWrite,
+            navigateToWriteWithArgs = navigateToWriteWithArgs,
+            navigateBackToHome = navigateBackToHome,
+        )
+
+        DisplayAlertDialog(
+            title = "Delete All Products",
+            message = "Are you sure you want to permanently delete all your Products?",
+            dialogOpened = deleteAllDialogOpened,
+            onCloseDialog = { deleteAllDialogOpened = false},
+            onYesClicked = {
+                viewModel.deleteAllProducts(
+                    onSuccess = {
+                        Toast.makeText(
+                            context,
+                            "All Products Deleted.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onError = {
+                        Toast.makeText(
+                            context,
+                            if (it.message == "No Internet Connection!")
+                                "We need an Internet Connection for this operation."
+                            else it.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+            }
+        )
+    }
 }
 
 fun NavGraphBuilder.barcodeRoute(){

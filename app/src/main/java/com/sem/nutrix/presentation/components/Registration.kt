@@ -75,7 +75,6 @@ fun Registration(
         ) {
             Text(
                 text = valueSubHeader,
-
                 modifier = modifier
                     .fillMaxWidth()
                     .heightIn(min = 30.dp),
@@ -152,53 +151,6 @@ fun MyTextField(
         singleLine = true
     )
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun EmailMyTextField(
-//    modifier: Modifier = Modifier,
-//    labelValue: String,
-//    email: String,
-//    onEmailChange: (String) -> Unit,
-//    painterResource: Painter,
-//    shape: Shape = Shapes().extraSmall,
-//    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-//    focusBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-//) {
-//    val scope = rememberCoroutineScope()
-//    val focuseManager = LocalFocusManager.current
-//
-//    OutlinedTextField(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .clip(shape),
-//        label = {Text(text = labelValue)},
-//        colors = TextFieldDefaults.outlinedTextFieldColors(
-//            focusedBorderColor = focusBorderColor,
-//            focusedLabelColor = focusBorderColor,
-//            cursorColor = focusBorderColor
-//        ),
-//        value = email,
-//        onValueChange = {
-//            onEmailChange(it)
-//        },
-//        leadingIcon = {
-//            Icon(painter = painterResource, contentDescription = "")
-//        },
-//        keyboardOptions = KeyboardOptions(
-//            imeAction = ImeAction.Next
-//        ),
-//        keyboardActions = KeyboardActions(
-//            onNext = {
-//                scope.launch {
-//                    focuseManager.moveFocus(FocusDirection.Down)
-//                }
-//            }
-//        ),
-//        maxLines = 1,
-//        singleLine = true
-//    )
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
