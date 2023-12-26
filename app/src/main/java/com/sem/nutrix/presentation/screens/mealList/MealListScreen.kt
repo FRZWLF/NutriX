@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,45 +51,47 @@ internal fun MealListScreen(
             )
         },
         content = {
-            Column(
-            ) {
-                MealListTop(
-                    value = test.totalKcal
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-                MealListAddButton(
-                    onClick = navigateToWrite
-                )
-                when (products) {
-                    is RequestState.Success -> {
-                        MealListContent(
-                            productsNote = products.data,
-                            onDeleteProduct = onDeleteProduct,
-                            onClick = navigateToWriteWithArgs
-                        )
-                    }
-
-                    is RequestState.Error -> {
-                        EmptyPage(
-                            title = "Error",
-                            subtitle = "${products.error.message}"
-                        )
-                    }
-
-                    is RequestState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+            LazyColumn {
+                item {
+                    MealListTop(
+                        value = test.totalKcal
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    MealListAddButton(
+                        onClick = navigateToWrite
+                    )
+                    when (products) {
+                        is RequestState.Success -> {
+                            MealListContent(
+                                productsNote = products.data,
+                                onDeleteProduct = onDeleteProduct,
+                                onClick = navigateToWriteWithArgs
+                            )
                         }
-                    }
 
-                    else -> {}
+                        is RequestState.Error -> {
+                            EmptyPage(
+                                title = "Error",
+                                subtitle = "${products.error.message}"
+                            )
+                        }
+
+                        is RequestState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        else -> {}
+                    }
+                    MealListNutritionTable(
+                        value = test.totalKcal
+                    )
                 }
-                MealListNutritionTable(
-                    value = test.totalKcal
-                )
+
             }
 
         }

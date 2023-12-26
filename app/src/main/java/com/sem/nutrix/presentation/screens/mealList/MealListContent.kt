@@ -62,7 +62,7 @@ internal fun MealListContent(
     val viewModel: AuthViewModel = viewModel()
 
     if (productsNote.isNotEmpty()) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .navigationBarsPadding()
@@ -72,13 +72,16 @@ internal fun MealListContent(
 //                stickyHeader (key = localDate) {
 //                    ProductHeader(localDate = localDate)
 //                }
-                items(
-                    items = products,
-                    key = { it._id.toString() }
-                ){
+//                items(
+//                    items = products,
+//                    key = { it._id.toString() }
+//                ){
+                products.forEach{product ->
                     viewModel.changeTestTextState(productsNote.values.flatten())
-                    ProductHolder(product = it, onClick = onClick, onDeleteProduct = onDeleteProduct)
+                    ProductHolder(product = product, onClick = onClick, onDeleteProduct = onDeleteProduct)
+
                 }
+
             }
         }
     } else {

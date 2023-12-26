@@ -2,7 +2,7 @@
 <resources>
     
     <style name="Theme.NutriX.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FAFFE5</item>
+        <item name="windowSplashScreenBackground">#403838</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logologo</item>
         <item name="postSplashScreenTheme">@style/Theme.NutriX</item>
     </style>

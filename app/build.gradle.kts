@@ -131,8 +131,5 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
     //Lottie Animations
-    implementation("com.airbnb.android:lottie:4.2.2")
-
-//    //Circular Progress-Bar
-//    implementation("com.mikhaellopez:circularprogressbar:3.1.0")
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
 }

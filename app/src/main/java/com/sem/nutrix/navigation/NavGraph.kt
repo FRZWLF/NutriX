@@ -18,6 +18,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.sem.nutrix.AnimatedSplashScreen
+import com.sem.nutrix.Splash
 import com.sem.nutrix.model.RequestState
 import com.sem.nutrix.presentation.components.DisplayAlertDialog
 import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
@@ -34,7 +36,13 @@ import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 import com.sem.nutrix.presentation.screens.login.LoginScreen
 import com.sem.nutrix.presentation.screens.mealList.MealListScreen
 import com.sem.nutrix.presentation.screens.mealList.MealListViewModel
+import com.sem.nutrix.util.Constants
 
+private fun getStartDestination(): String {
+    val user = App.create(APP_ID).currentUser
+    return if (user != null && user.loggedIn) Screen.MealProductList.route //Home
+    else Screen.Login.route
+}
 @Composable
 fun SetupNavGraph(
     startDestination: String,
@@ -88,6 +96,16 @@ fun SetupNavGraph(
             onDataLoaded = onDataLoaded
         )
         barcodeRoute()
+        splashRoute(
+            navigateNext = {
+                navController.navigate(getStartDestination()) {
+                    popUpTo(Screen.SplashScreen.route) {
+                        inclusive = true
+                    }
+                }
+            },
+            onDataLoaded = onDataLoaded
+        )
     }
 }
 
@@ -386,5 +404,19 @@ fun NavGraphBuilder.mealRoute(
 fun NavGraphBuilder.barcodeRoute(){
     composable(route = Screen.Barcode.route) {
 
+    }
+}
+
+fun NavGraphBuilder.splashRoute(
+    navigateNext: () -> Unit,
+    onDataLoaded: () -> Unit
+){
+    composable(route = Screen.SplashScreen.route){
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
+        Splash(
+            navigateNext = navigateNext
+        )
     }
 }
