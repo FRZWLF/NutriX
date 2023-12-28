@@ -40,7 +40,7 @@ import com.sem.nutrix.util.Constants
 
 private fun getStartDestination(): String {
     val user = App.create(APP_ID).currentUser
-    return if (user != null && user.loggedIn) Screen.MealProductList.route //Home
+    return if (user != null && user.loggedIn) Screen.Login.route //Home
     else Screen.Login.route
 }
 @Composable

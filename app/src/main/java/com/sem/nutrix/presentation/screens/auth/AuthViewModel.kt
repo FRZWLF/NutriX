@@ -117,6 +117,15 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 Log.d("Drin", email)
+
+                // Überprüfung auf Passwortkomplexität
+                val error = checkPasswordComplexity(password)
+
+                if (error != null) {
+                    onError(error)
+                    return@launch
+                }
+
                 val result = withContext(Dispatchers.IO) {
                     App.create(APP_ID).emailPasswordAuth.registerUser(
                         email,
@@ -140,6 +149,42 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
+    private fun checkPasswordComplexity(password: String): Exception? {
+        val nonComplianceList = mutableListOf<String>()
+
+        // Überprüfung der Passwortkomplexität (Beispielkriterien)
+        if (password.length < 8) {
+            nonComplianceList.add("8 Zeichen lang sein.")
+        }
+
+        if (!password.any { it.isUpperCase() }) {
+            nonComplianceList.add("einen Großbuchstaben enthalten.")
+        }
+
+        if (!password.any { it.isLowerCase() }) {
+            nonComplianceList.add("einen Kleinbuchstaben enthalten.")
+        }
+
+        if (!password.any { it.isDigit() }) {
+            nonComplianceList.add("eine Zahl enthalten.")
+        }
+
+        if (!password.any { !it.isLetterOrDigit() }) {
+            nonComplianceList.add("ein Sonderzeichen enthalten.")
+        }
+
+        // Wenn die Liste nicht leer ist, gibt eine Exception mit den Nichterfüllungen zurück
+        return if (nonComplianceList.isNotEmpty()) {
+            val errorMessage = "Passwort muss:\n" +
+                    nonComplianceList.joinToString("\n")
+            Exception(errorMessage)
+        } else {
+            null
+        }
+    }
+
+
     fun EmailPasswordSignInWithMongoAtlas(
         email:String,
         password: String,

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -53,13 +54,16 @@ fun RegistrationScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
         content = {
-            ContentWithMessageBar(messageBarState = messageBarState) {
+            ContentWithMessageBar(
+                messageBarState = messageBarState,
+                errorMaxLines = 5
+                ) {
                AuthContent(
                     loadingState = loadingState,
                     isLoading = isLoading,
                     onButtonClicked = onButtonClicked,
                     onRegisterButtonClicked = onRegisterButtonClicked,
-                   toLoginClicked = toLoginClicked
+                    toLoginClicked = toLoginClicked
                 )
             }
         }
