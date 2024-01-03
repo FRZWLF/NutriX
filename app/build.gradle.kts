@@ -6,7 +6,7 @@ plugins {
     id("com.google.devtools.ksp")
     id ("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
- //   id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 
 }
 
@@ -80,7 +80,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
     //Firebase
-    implementation("com.google.firebase:firebase-auth-ktx:22.1.2")
+    implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
 
     //Room components
@@ -104,13 +104,10 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     //Google Auth
-    //implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.3.0")
-
-    //Pager - Accompanist -> [DEPRECATED]
-    //implementation("com.google.accompanist:accompanist-pager:0.33.2-alpha")
 
     //Date-Time Picker
     implementation ("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
@@ -132,4 +129,9 @@ dependencies {
 
     //Lottie Animations
     implementation("com.airbnb.android:lottie-compose:6.0.1")
+
+    //Google Fit API
+    implementation("com.google.android.gms:play-services-fitness:21.1.0")
+//    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
 }

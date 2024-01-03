@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "175284321206",
+    "project_id": "nutrix-406212",
+    "storage_bucket": "nutrix-406212.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175284321206:android:61315b0eb80b01b7c21f17",
+        "android_client_info": {
+          "package_name": "com.sem.nutrix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175284321206-kbntnf06jm53ccrd6ase3bik278i0jqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBakDrm_9kLimXHJGOn5eL_dQN3PFVlang"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175284321206-40etj777d5dvkqehjfcje11ries3itf0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

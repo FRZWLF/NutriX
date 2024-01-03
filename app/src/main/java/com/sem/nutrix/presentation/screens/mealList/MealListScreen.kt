@@ -60,6 +60,7 @@ internal fun MealListScreen(
                     MealListAddButton(
                         onClick = navigateToWrite
                     )
+                    Spacer(modifier = Modifier.height(15.dp))
                     when (products) {
                         is RequestState.Success -> {
                             MealListContent(
@@ -87,6 +88,7 @@ internal fun MealListScreen(
 
                         else -> {}
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                     MealListNutritionTable(
                         value = test.totalKcal
                     )

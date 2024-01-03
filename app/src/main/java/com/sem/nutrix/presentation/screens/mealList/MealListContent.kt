@@ -149,6 +149,7 @@ internal fun EmptyPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .height(300.dp)
             .padding(all = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

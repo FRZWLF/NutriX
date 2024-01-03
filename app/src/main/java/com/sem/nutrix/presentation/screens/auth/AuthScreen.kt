@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.sem.nutrix.model.EmailPasswordState
 import com.sem.nutrix.util.Constants.CLIENT_ID
 import com.stevdzasan.messagebar.ContentWithMessageBar
@@ -39,10 +41,9 @@ fun RegistrationScreen(
     onButtonClicked: () -> Unit,
     onRegisterButtonClicked: () -> Unit,
     toLoginClicked: () -> Unit,
-    onTokenIdReceived: (String) -> Unit,
     onEmailPasswordReceived: (String, String) -> Unit,
-//    onSuccessfulFirebaseSignIn: (String) -> Unit,
-//    onFailedFirebaseSignIn: (Exception) -> Unit,
+    onSuccessfulFirebaseSignIn: (String) -> Unit,
+    onFailedFirebaseSignIn: (Exception) -> Unit,
     onDialogDismissed: (String) -> Unit,
     navigateToLogin: () -> Unit,
 ) {
@@ -73,16 +74,16 @@ fun RegistrationScreen(
         state = oneTapState,
         clientId = CLIENT_ID,
         onTokenIdReceived = { tokenId ->
-            onTokenIdReceived(tokenId)
-//            val credential = GoogleAuthProvider.getCredential(tokenId, null)
-//            FirebaseAuth.getInstance().signInWithCredential(credential)
-//                .addOnCompleteListener { task ->
-//                    if(task.isSuccessful) {
-//                        onSuccessfulFirebaseSignIn(tokenId)
-//                    } else {
-//                        task.exception?.let { it -> onFailedFirebaseSignIn(it) }
-//                    }
-//                }
+//            onTokenIdReceived(tokenId)
+            val credential = GoogleAuthProvider.getCredential(tokenId, null)
+            FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        onSuccessfulFirebaseSignIn(tokenId)
+                    } else {
+                        task.exception?.let { it -> onFailedFirebaseSignIn(it) }
+                    }
+                }
         },
         onDialogDismissed = { message ->
             onDialogDismissed(message)
@@ -133,7 +134,6 @@ fun RegisterWithEmailPassword(
     onDialogDismissed: (String) -> Unit,
 ) {
     val emailPassword: AuthViewModel = viewModel()
-//    val messageBarState = rememberMessageBarState()
 
     if (emailPasswordState.opened) {
         try {
@@ -161,7 +161,6 @@ fun RegisterWithEmailPassword(
             }
         }
     }
-//
 }
 
 @Composable

@@ -15,6 +15,7 @@ open class Product: RealmObject {
     var title: String = ""
     var description: String = ""
     var kcal: Int = 0
+    var burnedCalories: Float = 0f
     var amount: String = ""
     @SuppressLint("NewApi")
     var date: RealmInstant = Instant.now().toRealmInstant()
