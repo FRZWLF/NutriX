@@ -6,11 +6,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,19 +16,8 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
-import com.google.android.gms.fitness.request.DataReadRequest
-import com.google.android.gms.fitness.request.DataReadRequest.*
-import com.google.android.gms.fitness.result.DataReadResponse
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.internal.Contexts
-import dagger.hilt.android.internal.Contexts.getApplication
 import java.text.DateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.TimeUnit
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     var loadingState = mutableStateOf(false)
@@ -47,8 +32,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         .build()
 
-    var isSignInSuccess by mutableStateOf(false)
-        private set
 
     private val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1
 
@@ -78,8 +61,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Log.d("Money", "${task.result.account}")
             checkGoogleFitPermission(activity)
             // Erfolgreicher SignIn, handle hier
-            isSignInSuccess = true
-            Log.d("Klick", "$isSignInSuccess")
             Toast.makeText(getApplication(), "Worked", Toast.LENGTH_SHORT).show()
         } catch (e: ApiException) {
             // Fehler beim SignIn, handle hier
@@ -129,24 +110,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     val caloriesField = dataPoint.getValue(Field.FIELD_CALORIES)
 
                     if (caloriesField != null) {
-                        val calories = caloriesField.asFloat()
-                        Log.d("GoogleFit", "Verbrannte Kalorien: $calories kcal")
+                        val calories = caloriesField.asFloat().toInt()
+                        DailyCaloriesData.calorienBurned = calories
+                        DailyCaloriesData.date = DateFormat.getDateInstance().format(Date())
+                        Log.d("GoogleFit", "Verbrannte Kalorien: ${DailyCaloriesData.calorienBurned} kcal")
                     } else {
                         Log.d("GoogleFit", "Kalorienfeld ist null.")
                     }
                 }
-//                // Daten erfolgreich abgerufen
-//                val calories = if (dataSet.isEmpty) 0F else dataSet.dataPoints[0].getValue(Field.FIELD_CALORIES).asFloat()
-//
-//                // Aktuelles Datum formatieren
-//                val currentDate = DateFormat.getDateInstance().format(Date())
-//
-//                // Daten in deiner Data Class speichern
-//                val dailyCaloriesData = DailyCaloriesData(currentDate, calories)
-//                Log.d("GoogleFit", "Heutige verbrannte Kalorien: $calories kcal")
-//                Log.d("GoogleFit", "Heutiges Datum: $currentDate")
-//                // Füge diese Zeile hinzu, um den Inhalt von dataSet zu überprüfen
-//                Log.d("GoogleFit", "Inhalt von dataSet: $dataSet")
             }
             .addOnFailureListener { e ->
                 // Fehler beim Abrufen der Daten
@@ -169,5 +140,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
 data class DailyCaloriesData(
     val date: String, // Datum, an dem die Daten abgerufen wurden
-    val caloriesBurned: Float // Verbrannte Kalorien für diesen Tag
-)
+) {
+    companion object {
+        var calorienBurned: Int = 0
+
+        var date: String = ""
+
+    }
+}

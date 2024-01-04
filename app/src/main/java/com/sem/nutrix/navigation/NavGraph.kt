@@ -1,7 +1,6 @@
 package com.sem.nutrix.navigation
 
 import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,42 +11,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.sem.nutrix.AnimatedSplashScreen
-import com.sem.nutrix.R
 import com.sem.nutrix.Splash
 import com.sem.nutrix.model.RequestState
 import com.sem.nutrix.presentation.components.DisplayAlertDialog
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 import com.sem.nutrix.presentation.screens.auth.RegistrationScreen
 import com.sem.nutrix.presentation.screens.auth.rememberEmailPasswordState
+import com.sem.nutrix.presentation.screens.home.HomeScreen
+import com.sem.nutrix.presentation.screens.home.HomeViewModel
+import com.sem.nutrix.presentation.screens.login.LoginScreen
+import com.sem.nutrix.presentation.screens.mealList.MealListScreen
+import com.sem.nutrix.presentation.screens.mealList.MealListViewModel
+import com.sem.nutrix.util.Constants.APP_ID
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sem.nutrix.presentation.screens.home.HomeScreen
-import com.sem.nutrix.util.Constants.APP_ID
-import com.sem.nutrix.presentation.screens.auth.AuthViewModel
-import com.sem.nutrix.presentation.screens.home.HomeViewModel
-import com.sem.nutrix.presentation.screens.login.LoginScreen
-import com.sem.nutrix.presentation.screens.mealList.MealListScreen
-import com.sem.nutrix.presentation.screens.mealList.MealListViewModel
-import com.sem.nutrix.util.Constants
 
 private fun getStartDestination(): String {
     val user = App.create(APP_ID).currentUser
@@ -278,7 +267,6 @@ fun NavGraphBuilder.loginRoute(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeRoute(
     navigateToProductadd: () -> Unit,
     navigateToAuth: () -> Unit,
@@ -290,10 +278,7 @@ fun NavGraphBuilder.homeRoute(
         val scope = rememberCoroutineScope()
         val viewModel: HomeViewModel = viewModel()
         val loadingState by viewModel.loadingState
-        val oneTapState = rememberOneTapSignInState()
-        val messageBarState = rememberMessageBarState()
         val context = LocalContext.current
-        val isSignInSuccess by rememberUpdatedState(viewModel.isSignInSuccess)
 
         LaunchedEffect(key1 = Unit) {
             onDataLoaded()
@@ -302,8 +287,6 @@ fun NavGraphBuilder.homeRoute(
         HomeScreen(
             drawerState = drawerState,
             loadingState = loadingState,
-            oneTapState = oneTapState,
-            isSignInSuccess = isSignInSuccess,
             onMenuClicked = {
                 scope.launch {
                     drawerState.open()
@@ -315,18 +298,6 @@ fun NavGraphBuilder.homeRoute(
             },
             onSignOutClicked = {
                signOutDialogOpened = true
-            },
-            onDialogDismissed = { message ->
-                messageBarState.addError(Exception(message))
-                viewModel.setLoading(false)
-            },
-            onSuccessfulSignIn = {
-                messageBarState.addSuccess("Successfully Google-Api-Konto SignIn!")
-                viewModel.setLoading(false)
-            },
-            onFailedFirebaseSignIn = {
-                messageBarState.addError(it)
-                viewModel.setLoading(false)
             },
             navigateToProductadd = navigateToProductadd
         )

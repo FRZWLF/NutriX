@@ -15,7 +15,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import com.sem.nutrix.navigation.Screen
 import com.sem.nutrix.navigation.SetupNavGraph
-import com.sem.nutrix.presentation.screens.home.ChangeApi
 import com.sem.nutrix.presentation.screens.home.HomeViewModel
 import com.sem.nutrix.ui.theme.NutriXTheme
 import dagger.hilt.android.AndroidEntryPoint
