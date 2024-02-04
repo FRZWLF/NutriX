@@ -1,6 +1,5 @@
 package com.sem.nutrix
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,9 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.FirebaseApp
 import com.sem.nutrix.navigation.Screen
 import com.sem.nutrix.navigation.SetupNavGraph
 import com.sem.nutrix.presentation.screens.home.HomeViewModel
@@ -25,13 +22,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var homeViewModel: HomeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        checkPermissions()
         installSplashScreen().setKeepOnScreenCondition{
             SplashOpened
         }
-        FirebaseApp.initializeApp(this)
         setContent {
             NutriXTheme(dynamicColor = false) {
                 val navController = rememberNavController()

@@ -72,8 +72,8 @@ fun SetupNavGraph(
             onDataLoaded = onDataLoaded
         )
         homeRoute(
-            navigateToProductadd = {
-                navController.navigate(Screen.ProductAdd.route)
+            navigateToMeal = {
+                navController.navigate(Screen.MealProductList.route)
             },
             navigateToAuth = {
                 navController.popBackStack()
@@ -268,7 +268,7 @@ fun NavGraphBuilder.loginRoute(
 
 
 fun NavGraphBuilder.homeRoute(
-    navigateToProductadd: () -> Unit,
+    navigateToMeal: () -> Unit,
     navigateToAuth: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
@@ -299,7 +299,7 @@ fun NavGraphBuilder.homeRoute(
             onSignOutClicked = {
                signOutDialogOpened = true
             },
-            navigateToProductadd = navigateToProductadd
+            navigateToMeal = navigateToMeal
         )
 
         DisplayAlertDialog(

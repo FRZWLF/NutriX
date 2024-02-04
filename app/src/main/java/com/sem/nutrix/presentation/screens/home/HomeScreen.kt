@@ -25,51 +25,68 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sem.nutrix.R
 import com.sem.nutrix.presentation.components.GoogleButton
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sem.nutrix.presentation.screens.auth.AuthViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    loadingState: Boolean,
     drawerState: DrawerState,
     onMenuClicked: () -> Unit,
-    loadingState: Boolean,
     onSignOutClicked: () -> Unit,
     onSyncClicked: () -> Unit,
-    navigateToProductadd: () -> Unit
-){
+    navigateToMeal: () -> Unit
+) {
     NavigationDrawer(
         drawerState = drawerState,
         onSignOutClicked = onSignOutClicked,
         loadingState = loadingState,
         onSyncClicked = onSyncClicked
     ) {
-        Scaffold (
-            topBar = {
-                HomeTopBar(onMenuClicked = onMenuClicked)
-            },
-            floatingActionButton = {
-                FloatingActionButton(onClick = navigateToProductadd){
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "New Product Icon"
+        val test: AuthViewModel = viewModel()
+        Scaffold(
+                topBar = {
+                    HomeTopBar(onMenuClicked = onMenuClicked)
+                },
+                content = {
+                Column(
+                ){
+                    HomeTop(
+                        value = test.totalKcal
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    BreakfastButton(
+                        onClick = navigateToMeal
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    LunchButton(
+                        onClick = navigateToMeal
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    DinnerButton(
+                        onClick = navigateToMeal
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    SnacksButton(
+                        onClick = navigateToMeal
                     )
                 }
-
-            },
-            content = {}
-        )
+        })
     }
 }
 
 @Composable
 fun NavigationDrawer(
-    drawerState: DrawerState,
     loadingState: Boolean,
-    onSignOutClicked: () -> Unit,
     onSyncClicked: () -> Unit,
+    drawerState: DrawerState,
+    onSignOutClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
