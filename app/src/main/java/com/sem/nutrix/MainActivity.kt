@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.sem.nutrix.navigation.Screen
 import com.sem.nutrix.navigation.SetupNavGraph
@@ -22,6 +23,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var homeViewModel: HomeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
+        checkPermissions()
         installSplashScreen().setKeepOnScreenCondition{
             SplashOpened
         }

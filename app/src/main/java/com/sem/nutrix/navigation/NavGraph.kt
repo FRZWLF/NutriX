@@ -40,7 +40,7 @@ import kotlinx.coroutines.withContext
 
 private fun getStartDestination(): String {
     val user = App.create(APP_ID).currentUser
-    return if (user != null && user.loggedIn) Screen.MealProductList.route //Home
+    return if (user != null && user.loggedIn) Screen.Home.route //Home
     else Screen.Login.route
 }
 @Composable
